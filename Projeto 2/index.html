@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadastro de usuários</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F3F4F1; --ink: #1F2A22; --ink-soft: #56604F;
+    --accent: #3D6B4E; --card: #FFFFFF; --border: #DDE3D8; --danger: #A6412F;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif; padding: 40px 16px;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { font-family: 'Fraunces', serif; font-size: 30px; margin: 0 0 6px; }
+  p.lede { color: var(--ink-soft); margin: 0 0 28px; }
+  .flash {
+    background: #FFF6E5; border: 1px solid #E8CE9C; color: #6B4E12;
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 18px; font-size: 14px;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; margin-bottom: 28px;
+  }
+  .card h2 { font-family: 'Fraunces', serif; font-size: 19px; margin: 0 0 16px; }
+  label { display: block; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  input {
+    width: 100%; padding: 10px 12px; margin-bottom: 14px; border-radius: 8px;
+    border: 1px solid var(--border); font-size: 15px; font-family: 'Inter', sans-serif;
+  }
+  button {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 11px 20px; font-weight: 600; font-size: 14.5px; cursor: pointer;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 14.5px; }
+  th { color: var(--ink-soft); font-weight: 600; font-size: 13px; }
+  .row-actions { display: flex; gap: 8px; }
+  .row-actions a, .row-actions button {
+    font-size: 13px; padding: 6px 10px; border-radius: 6px; text-decoration: none;
+  }
+  .row-actions a { background: #EEF2EC; color: var(--ink); border: 1px solid var(--border); }
+  .row-actions button.excluir { background: #FBEAE6; color: var(--danger); border: 1px solid #F0C9BF; }
+  .empty { color: var(--ink-soft); font-size: 14px; padding: 12px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cadastro de usuários</h1>
+  <p class="lede">Interface pronta — o CRUD real acontece em <code>database.py</code>.</p>
+
+  {% with mensagens = get_flashed_messages() %}
+    {% if mensagens %}
+      {% for m in mensagens %}
+        <div class="flash">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="card">
+    <h2>Novo usuário</h2>
+    <form method="POST" action="{{ url_for('cadastrar') }}">
+      <label for="nome">Nome</label>
+      <input type="text" id="nome" name="nome" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" required minlength="6">
+
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Usuários cadastrados</h2>
+    {% if usuarios %}
+      <table>
+        <thead>
+          <tr><th>Nome</th><th>Email</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for usuario in usuarios %}
+          <tr>
+            <td>{{ usuario[1] }}</td>
+            <td>{{ usuario[2] }}</td>
+            <td>
+              <div class="row-actions">
+                <a href="{{ url_for('editar', usuario_id=usuario[0]) }}">Editar</a>
+                <form method="POST" action="{{ url_for('excluir', usuario_id=usuario[0]) }}" style="margin:0;">
+                  <button type="submit" class="excluir">Excluir</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="empty">Nenhum usuário ainda — ou <code>listar_usuarios()</code> ainda não foi implementada.</p>
+    {% endif %}
+  </div>
+</main>
+</body>
+</html>

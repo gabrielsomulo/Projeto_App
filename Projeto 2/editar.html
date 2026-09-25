@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editar usuário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #F3F4F1; --ink: #1F2A22; --ink-soft: #56604F; --accent: #3D6B4E; --card: #FFFFFF; --border: #DDE3D8; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Inter', system-ui, sans-serif; padding: 40px 16px; }
+  main { max-width: 480px; margin: 0 auto; }
+  h1 { font-family: 'Fraunces', serif; font-size: 26px; margin: 0 0 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  label { display: block; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  input { width: 100%; padding: 10px 12px; margin-bottom: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 15px; }
+  .actions { display: flex; gap: 10px; margin-top: 6px; }
+  button, a.cancelar {
+    padding: 11px 20px; border-radius: 8px; font-weight: 600; font-size: 14.5px;
+    text-decoration: none; text-align: center;
+  }
+  button { background: var(--accent); color: #fff; border: none; cursor: pointer; }
+  a.cancelar { background: #EEF2EC; color: var(--ink); border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Editar usuário</h1>
+  <div class="card">
+    <form method="POST" action="{{ url_for('salvar_edicao', usuario_id=usuario[0]) }}">
+      <label for="nome">Nome</label>
+      <input type="text" id="nome" name="nome" value="{{ usuario[1] }}" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" value="{{ usuario[2] }}" required>
+
+      <div class="actions">
+        <button type="submit">Salvar</button>
+        <a class="cancelar" href="{{ url_for('index') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>

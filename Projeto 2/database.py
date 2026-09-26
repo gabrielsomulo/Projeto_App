@@ -33,7 +33,16 @@ def obter_conexao():
             user=DB_USER, password=DB_PASSWORD,
         )
     """
-    pass
+
+    return psycopg2.connect(
+        dbname = DB_NAME,
+        user = DB_USER,
+        password = DB_PASSWORD,
+        host = DB_HOST,
+        port = DB_PORT
+
+    )
+
 
 
 def inserir_usuario(nome, email, senha_hash):
@@ -48,7 +57,20 @@ def inserir_usuario(nome, email, senha_hash):
       connection.commit() e feche cursor e conexão (de preferência com
       'with' ou try/finally, para garantir o fechamento mesmo se der erro).
     """
-    pass
+
+    conn = obter_conexao()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(
+            "INSERT INTO usuarios (nome, email, senha_hash) VALUES (%s, %s, %s)",
+            (nome, email, senha_hash)
+        )
+        conn.commit()
+
+    finally:
+        cur.close()
+        conn.close()
 
 
 def listar_usuarios():
@@ -59,7 +81,17 @@ def listar_usuarios():
     Importante: NUNCA inclua 'senha_hash' no retorno desta função — ela
     alimenta o template HTML, e a senha (nem o hash) deve aparecer na tela.
     """
-    pass
+
+    conn = obter_conexao()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("SELECT id, nome, email FROM usuarios ORDER BY id")
+        return cur.fetchall()
+
+    finally:
+        cur.close()
+        conn.close()
 
 
 def buscar_usuario_por_id(usuario_id):
@@ -67,7 +99,17 @@ def buscar_usuario_por_id(usuario_id):
     TODO: retorne um único usuário (id, nome, email) pelo id informado,
     ou None se não existir nenhum usuário com esse id.
     """
-    pass
+
+    conn = obter_conexao()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("SELECT id, nome, email FROM usuarios WHERE id = %s", (usuario_id,))
+        return cur.fetchone()
+
+    finally:
+        cur.close()
+        conn.close()
 
 
 def atualizar_usuario(usuario_id, nome, email):
@@ -75,14 +117,35 @@ def atualizar_usuario(usuario_id, nome, email):
     TODO: atualize nome e email do usuário com o id informado, usando
     uma query UPDATE parametrizada (mesma regra de segurança do INSERT).
     """
-    pass
+
+    conn = obter_conexao()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("UPDATE usuarios SET nome = %s, email = %s WHERE id = %s;", (nome, email, usuario_id))
+
+        conn.commit()
+
+    finally:
+        cur.close()
+        conn.close()
 
 
 def deletar_usuario(usuario_id):
     """
     TODO: remova da tabela o usuário com o id informado.
     """
-    pass
+
+    conn = obter_conexao()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
+        conn.commit()
+
+    finally:
+        cur.close()
+        conn.close()
 
 
 def email_ja_cadastrado(email):
@@ -91,4 +154,15 @@ def email_ja_cadastrado(email):
     caso contrário. Usada em app.py para não deixar cadastrar duas
     contas com o mesmo email.
     """
-    pass
+
+    conn = obter_conexao()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("SELECT email FROM usuarios WHERE email = %s", (email,))
+
+        return cur.fetchone() is not None
+
+    finally:
+        cur.close()
+        conn.close()
